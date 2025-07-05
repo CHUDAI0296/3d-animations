@@ -1,62 +1,101 @@
-# AnimAI - 3D Animation Generator
+# 3D Animation Generator
 
-This is a web application built with Next.js for converting videos or images into 3D animated characters. The application integrates with a 3D animation API, allowing users to upload media files and select animation templates to generate 3D animations.
+A modern web application for generating 3D animations from videos and images using AI technology.
 
 ## Features
 
-- Upload image or video files
-- Choose from predefined animation templates
-- Generate 3D animated characters
-- Responsive design for desktop and mobile devices
+- Upload videos or images to convert to 3D animations
+- Choose from various animation templates (Action, Dance, Cartoon, Business)
+- Generate high-quality 3D animations with AI
+- Preview animations directly in the browser
+- Download or share your animations
 
-## Tech Stack
+## SEO Optimization
+
+This project includes comprehensive SEO optimization:
+
+- Semantic HTML structure
+- Meta tags for title, description, and keywords
+- Open Graph and Twitter card meta tags
+- Structured data (JSON-LD) for rich search results
+- Sitemap.xml and robots.txt
+- Optimized for the following keywords:
+  - 3D animation generator
+  - Video to 3D animation
+  - AI animation
+  - 3D cartoon characters
+  - 3D animation software
+  - 3D character creator
+  - 3D avatar maker
+  - AI motion capture
+  - 3D animation online
+  - 3D animation converter
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/3d-animation-generator.git
+
+# Navigate to the project directory
+cd 3d-animation-generator
+
+# Install dependencies
+npm install
+
+# Run the development server
+npm run dev
+```
+
+## Technologies Used
 
 - Next.js - React framework
-- Tailwind CSS - Styling
-- 3D Animation API - For generating 3D animations
+- Tailwind CSS - Utility-first CSS framework
+- React Hooks - State management
+- Next.js API Routes - Backend API
 
-## Installation & Setup
+## Deployment
 
-1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/animai.git
-cd animai
-```
-
-2. Install dependencies
+The application can be deployed using Vercel:
 
 ```bash
-npm install
-# or
-yarn install
+npm run build
+npm run start
 ```
 
-3. Create environment variables file
-
-Create a `.env.local` file and add the following content:
-
-```
-NEXT_PUBLIC_API_KEY=your_api_key
-```
-
-4. Start the development server
+Or deploy directly to Vercel:
 
 ```bash
-npm run dev
-# or
-yarn dev
+vercel
 ```
 
-The application will run at [http://localhost:3000](http://localhost:3000).
+## License
 
-## API Configuration
+MIT
 
-To use the 3D Animation API, you need to:
+## SEO Best Practices Implemented
 
-1. Register for an account
-2. Obtain an API key
-3. Add the API key to the `.env.local` file
+1. **Page Speed Optimization**
+   - Image optimization with Next.js Image component
+   - Code splitting and lazy loading
+   - Minimized CSS and JavaScript
+
+2. **Mobile Responsiveness**
+   - Fully responsive design for all device sizes
+   - Mobile-friendly UI elements
+
+3. **Content Optimization**
+   - Keyword-rich content
+   - Proper heading structure (H1, H2, H3)
+   - Alt text for images
+   - Schema markup for rich snippets
+
+4. **Technical SEO**
+   - Clean URL structure
+   - XML sitemap
+   - Robots.txt configuration
+   - Canonical URLs
+   - HTTPS implementation
 
 ## Project Structure
 

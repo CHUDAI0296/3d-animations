@@ -20,7 +20,7 @@ export async function getTemplates() {
         id: 1, 
         name: "Action Character", 
         description: "Perfect for action and combat scenes with fluid motion transitions and battle poses", 
-        thumbnail: "/templates/action.jpg",
+        thumbnailUrl: "/templates/action.jpg",
         category: "Action",
         features: ["Combat moves", "Running poses", "Jump effects"]
       },
@@ -28,7 +28,7 @@ export async function getTemplates() {
         id: 2, 
         name: "Dance Character", 
         description: "Ideal for dance and music videos with beautiful dance movements and rhythmic feel", 
-        thumbnail: "/templates/dance.jpg",
+        thumbnailUrl: "/templates/dance.jpg",
         category: "Dance",
         features: ["Smooth steps", "Rhythm sync", "Elegant poses"]
       },
@@ -36,7 +36,7 @@ export async function getTemplates() {
         id: 3, 
         name: "Cartoon Character", 
         description: "Suitable for cartoon and animation styles with exaggerated expressions and lively actions", 
-        thumbnail: "/templates/cartoon.jpg",
+        thumbnailUrl: "/templates/cartoon.jpg",
         category: "Cartoon",
         features: ["Exaggerated expressions", "Cartoon moves", "Cute style"]
       },
@@ -44,7 +44,7 @@ export async function getTemplates() {
         id: 4, 
         name: "Business Character", 
         description: "Perfect for business and professional scenes, showcasing professional image and confident posture", 
-        thumbnail: "/templates/business.jpg",
+        thumbnailUrl: "/templates/business.jpg",
         category: "Business",
         features: ["Professional posture", "Business gestures", "Formal presentation"]
       },

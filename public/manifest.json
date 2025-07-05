@@ -1,0 +1,33 @@
+{
+  "name": "3D Animation Generator",
+  "short_name": "3D Animator",
+  "description": "Transform videos and images into stunning 3D animations with AI technology",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "keywords": [
+    "3D animation generator",
+    "video to 3D animation",
+    "AI animation",
+    "3D cartoon characters",
+    "3D animation software",
+    "3D character creator",
+    "3D avatar maker",
+    "AI motion capture",
+    "3D animation online",
+    "3D animation converter"
+  ]
+} 

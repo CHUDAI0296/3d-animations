@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+
+.template-card {
+  background: linear-gradient(145deg, #f0f3ff, #e6e9ff);
+  border: 1px solid transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.template-card:hover {
+  border-color: rgba(99, 102, 241, 0.5); /* indigo-500 with opacity */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.template-card.selected {
+  border-color: #6366f1; /* indigo-500 */
+  background: linear-gradient(145deg, #e9eaff, #dbe0ff);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+}
+
+.template-card h3 {
+    color: #3730a3; /* indigo-800 */
+}
+.template-card p {
+    color: #4338ca; /* indigo-700 */
+}
+
+.tag {
+  background-color: rgba(99, 102, 241, 0.1); /* indigo-100 with opacity */
+  color: #4f46e5; /* indigo-600 */
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+} 
