@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import Head from 'next/head';
 import { useSession, signIn, signOut } from "next-auth/react"
+import { motion } from 'framer-motion';
 
 const templates = [
   {
@@ -16,7 +17,7 @@ const templates = [
     name: 'Dance',
     character: 'Dance Character',
     description: 'Ideal for dance and music videos with beautiful dance movements and rhythmic feel.',
-    tags: ['Smooth steps', 'Rhytm sync', 'Elegant poses'],
+    tags: ['Smooth steps', 'Rhythm sync', 'Elegant poses'],
     thumbnail: '/templates/dance.png',
   },
   {
@@ -36,6 +37,18 @@ const templates = [
     thumbnail: '/templates/business.png',
   },
 ];
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
 
 export default function Home() {
   const { data: session } = useSession()
@@ -63,20 +76,36 @@ export default function Home() {
       alert("Please upload a file and select a template first.");
       return;
     };
+    
+    if (!session) {
+      alert("Please sign in to generate an animation.");
+      signIn(); // Redirect to sign-in page
+      return;
+    }
 
     setIsGenerating(true);
     setGeneratedAnimation(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('templateId', selectedTemplate.id);
+
     try {
-      // Mocking generation process
-      console.log("Generating animation with:", {
-        fileName: file.name,
-        template: selectedTemplate.name,
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        body: formData,
       });
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate network request
-      setGeneratedAnimation("/animations/result.mp4"); // Mock result
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Something went wrong');
+      }
+
+      const result = await response.json();
+      setGeneratedAnimation(result.animationUrl);
     } catch (error) {
       console.error("Error generating animation:", error);
-      alert("Failed to generate animation. Please try again.");
+      alert(`Failed to generate animation: ${error.message}`);
     } finally {
       setIsGenerating(false);
     }
@@ -97,91 +126,96 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex flex-col font-sans">
       <Head>
-        <title>Free 3D Animation Generator | Create Animations from Video</title>
-        <meta name="description" content="Instantly turn your videos and images into high-quality 3D animations with our AI-powered generator. Free to use, no sign-up required." />
+        <title>AnimAI - Create Stunning 3D Animations with AI</title>
+        <meta name="description" content="Upload your image or video and let AI bring your ideas to life in 3D" />
         <meta name="keywords" content="3D animation generator, video to 3D animation, AI animation, 3D cartoon characters, 3D animation software, 3D character creator, 3D avatar maker, AI motion capture, 3D animation online, 3D animation converter" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "3D Animation Generator",
-              "description": "Transform videos and images into stunning 3D animations with AI technology",
-              "applicationCategory": "MultimediaApplication",
-              "operatingSystem": "Web",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-              }
-            }
-          `}
-        </script>
       </Head>
 
       {/* Navbar */}
-      <nav className="relative flex items-center justify-between px-4 sm:px-8 py-4 bg-white shadow">
-        <div className="text-xl font-bold text-indigo-600">3D Ani Gen</div>
-        
-        {/* Hamburger Button */}
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-              )}
-            </svg>
-          </button>
-        </div>
+      <header className="sticky top-0 z-30 w-full">
+        <nav className="relative flex items-center justify-between px-4 sm:px-8 py-4 bg-white/80 backdrop-blur-sm shadow-sm">
+          <div className="text-2xl font-bold text-gray-800">AnimAI</div>
+          
+          {/* Hamburger Button */}
+          <div className="md:hidden">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-600 hover:text-indigo-600 focus:outline-none">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                )}
+              </svg>
+            </button>
+          </div>
 
-        {/* Menu Links */}
-        <div className={`absolute md:static top-full left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:flex flex-col md:flex-row md:items-center md:space-x-4 p-4 md:p-0 z-20`}>
-          <a href="#faq" onClick={() => setIsMenuOpen(false)} className="block md:inline-block py-2 text-gray-600 hover:text-indigo-600">FAQ</a>
-          <a href="#templates" onClick={() => setIsMenuOpen(false)} className="block md:inline-block py-2 text-gray-600 hover:text-indigo-600">Templates</a>
-          {session ? (
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 border-t md:border-none pt-4 md:pt-0 mt-4 md:mt-0">
-              <p className="text-sm text-gray-500">{session.user.email}</p>
-              <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                Sign Out
-              </button>
+          {/* Menu Links */}
+          <div className={`absolute md:static top-full left-0 w-full md:w-auto bg-white/80 md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:flex flex-col md:flex-row md:items-center md:space-x-6 p-4 md:p-0 z-20`}>
+            <a href="#features" onClick={() => setIsMenuOpen(false)} className="block md:inline-block py-2 text-gray-600 hover:text-indigo-600 font-semibold">Features</a>
+            <a href="#how-it-works" onClick={() => setIsMenuOpen(false)} className="block md:inline-block py-2 text-gray-600 hover:text-indigo-600 font-semibold">How It Works</a>
+            <a href="#faq" onClick={() => setIsMenuOpen(false)} className="block md:inline-block py-2 text-gray-600 hover:text-indigo-600 font-semibold">FAQ</a>
+            <div className="md:pl-4">
+              {session ? (
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 border-t md:border-none pt-4 md:pt-0 mt-4 md:mt-0">
+                  <p className="text-sm text-gray-700">Welcome, {session.user.email}</p>
+                  <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="w-full md:w-auto text-sm text-gray-600 hover:text-indigo-600 font-semibold">
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                 <button onClick={() => { signIn(); setIsMenuOpen(false); }} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-2 px-5 rounded-lg transition-all shadow-md hover:shadow-lg w-full md:w-auto">
+                  Sign In / Register
+                </button>
+              )}
             </div>
-          ) : (
-            <div className="border-t md:border-none pt-4 md:pt-0 mt-4 md:mt-0">
-              <button onClick={() => { signIn(); setIsMenuOpen(false); }} className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                Sign In
-              </button>
-            </div>
-          )}
-        </div>
-      </nav>
+          </div>
+        </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center px-4 py-12 text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4">Free 3D Animation Generator</h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl">
-          Instantly turn your videos and images into high-quality 3D animations. 
-          Free to use, no sign-up required.
-        </p>
-        <a href="#upload" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-          Start Creating Now
-        </a>
-      </section>
+      <motion.section 
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.2
+            }
+          }
+        }}
+        className="flex flex-col items-center justify-center px-4 pt-16 pb-12 text-center"
+      >
+        <motion.h1 variants={sectionVariants} className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">Create Stunning 3D Animations with AI</motion.h1>
+        <motion.p variants={sectionVariants} className="text-lg md:text-xl text-gray-700 mb-8 max-w-3xl">
+          Upload your image or video and let AI bring your ideas to life in 3D
+        </motion.p>
+      </motion.section>
 
-      {/* Main Content - Upload & Generate */}
-      <main id="upload" className="container mx-auto px-4 py-12 flex-grow">
-        <div className="bg-white rounded-lg shadow-xl p-4 md:p-8 max-w-7xl mx-auto">
+      {/* Main Content - Two Column Layout */}
+      <main id="upload" className="container mx-auto px-4 pb-12 flex-grow">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.3
+              }
+            }
+          }}
+          className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start"
+        >
           
-          {/* Step 1: Upload */}
-          <div className="mb-12">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">1. Upload Your Video or Image</h2>
-            <div 
-              className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${file ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-indigo-400'}`}
+          {/* Left Column: Upload */}
+          <motion.div variants={sectionVariants} className="lg:col-span-2 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 h-full">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">1. Upload Your Video or Image</h2>
+             <div 
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${file ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-indigo-400'}`}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
@@ -195,11 +229,11 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="text-gray-500 mb-4 py-10">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  <svg className="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                   </svg>
-                  <p className="mt-2">Drag and drop your file here</p>
-                  <p className="text-sm">Supports images and videos</p>
+                  <p className="mt-2 font-semibold">Click or drag files here</p>
+                  <p className="text-sm">Supports image and video files</p>
                 </div>
               )}
               <input
@@ -213,48 +247,57 @@ export default function Home() {
                 htmlFor="file-upload"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition-colors"
               >
-                {file ? "Change File" : "Click to select a file"}
+                {file ? "Change File" : "Select File"}
               </label>
             </div>
-          </div>
-          
-          {/* Step 2: Choose Template */}
-          <div id="templates" className="mb-12">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6">2. Choose Animation Template</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          </motion.div>
+
+          {/* Right Column: Templates */}
+          <motion.div variants={sectionVariants} className="lg:col-span-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 h-full">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">2. Choose Animation Template</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {templates.map((template) => (
                 <div 
                   key={template.id} 
-                  className={`template-card p-6 rounded-lg cursor-pointer transition-all transform hover:-translate-y-1 ${
-                    selectedTemplate?.id === template.id ? 'selected' : ''
+                  className={`template-card-v2 bg-slate-50 rounded-xl cursor-pointer transition-all border-2 ${
+                    selectedTemplate?.id === template.id 
+                      ? 'border-indigo-500 shadow-lg scale-105' 
+                      : 'border-transparent hover:shadow-md hover:border-indigo-200'
                   }`}
                   onClick={() => handleTemplateSelect(template)}
                 >
-                  <h3 className="text-xl font-bold">{template.name}</h3>
-                  <p className="text-sm opacity-80 mb-3">{template.character}</p>
-                  <p className="opacity-90 mb-4 text-sm font-light">{template.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {template.tags.map(tag => (
-                      <span key={tag} className="tag">{tag}</span>
-                    ))}
+                  <div className="p-4 text-center">
+                    <div className="flex justify-center mb-3">
+                      <span className="pill-v2">{template.name}</span>
+                    </div>
+                    <p className="font-semibold text-gray-800">{template.character}</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-b-xl border-t">
+                    <p className="text-gray-600 mb-3 text-sm">{template.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {template.tags.map(tag => (
+                        <span key={tag} className="tag-v2">{tag}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
+        </motion.div>
 
-          {/* Step 3: Generate */}
-          <div className="text-center">
+        {/* Generate Button & Result */}
+        <div className="mt-12">
+            <div className="text-center">
              <button
               onClick={handleGenerate}
               disabled={!file || !selectedTemplate || isGenerating}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               {isGenerating ? 'Generating...' : 'Generate 3D Animation'}
             </button>
           </div>
 
-          {/* Result */}
           {isGenerating && (
             <div className="mt-8 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
@@ -282,10 +325,76 @@ export default function Home() {
         </div>
       </main>
 
+      {/* Features Section */}
+      <motion.section 
+        id="features" 
+        className="py-16 bg-white"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Powerful 3D Animation Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-xl font-semibold mb-3 text-indigo-700">AI-Powered Conversion</h3>
+              <p>Convert videos and images to 3D animations with advanced AI technology</p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-xl font-semibold mb-3 text-indigo-700">Multiple Animation Styles</h3>
+              <p>Choose from various 3D animation templates and styles for your characters</p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-xl font-semibold mb-3 text-indigo-700">Easy Export & Sharing</h3>
+              <p>Download your 3D animations or share them directly on social media</p>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* How It Works Section */}
+      <motion.section 
+        id="how-it-works" 
+        className="py-16 bg-gray-50"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">How to Create 3D Animations</h2>
+          <div className="flex flex-col md:flex-row justify-center items-center md:items-start space-y-8 md:space-y-0 md:space-x-8">
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">1</div>
+              <h3 className="text-xl font-semibold mb-2">Upload Your Media</h3>
+              <p>Upload your video or image that you want to convert to a 3D animation</p>
+            </div>
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">2</div>
+              <h3 className="text-xl font-semibold mb-2">Choose a Template</h3>
+              <p>Select from our library of 3D animation templates and styles</p>
+            </div>
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">3</div>
+              <h3 className="text-xl font-semibold mb-2">Generate & Download</h3>
+              <p>Our AI generates your 3D animation, ready to download or share</p>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
       {/* FAQ Section */}
-      <section id="faq" className="py-16 bg-white">
+      <motion.section 
+        id="faq" 
+        className="py-16 bg-white"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
         <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold mb-2">What is a 3D animation generator?</h3>
@@ -301,16 +410,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8">
+      <footer className="bg-gray-800 text-white py-6 mt-auto">
           <div className="container mx-auto px-4 text-center">
-              <p>&copy; 2024 3D Animation Generator. All rights reserved.</p>
-              <div className="flex justify-center space-x-4 mt-4">
-                  <a href="#" className="hover:text-indigo-400">Privacy Policy</a>
-                  <a href="#" className="hover:text-indigo-400">Terms of Service</a>
-              </div>
+              <p>&copy; 2024 AnimAI. All rights reserved.</p>
           </div>
       </footer>
     </div>
