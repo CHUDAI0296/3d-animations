@@ -2,11 +2,5 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "npm install",
-  "functions": {
-    "api/replicate.ts": {
-      "runtime": "@vercel/node@3.0.0"
-    }
-  },
-  "nodeVersion": "18.x"
+  "installCommand": "npm install"
 } 
