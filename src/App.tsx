@@ -136,9 +136,9 @@ function App() {
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                {navigator.language.startsWith('zh') ? 'AI Animation' : 'AI Animation'}
+                AI Text Animation Generator
               </h1>
-              <p className="text-cyan-400 text-sm font-mono">AI MEDIA GENERATOR</p>
+              <p className="text-cyan-400 text-sm font-mono">Create Stunning Animated Text with Artificial Intelligence</p>
             </div>
           </div>
           
