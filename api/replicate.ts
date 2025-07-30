@@ -57,6 +57,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   try {
+    console.log('Starting API call with config:', JSON.stringify(modelConfig, null, 2));
+    
     // 1. 发起prediction
     const predictionRes = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
