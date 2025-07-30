@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // 根据类型选择不同的模型和参数
   const modelConfig = type === 'video' ? {
-    version: 'beecf59c4aee8d81bf04f0381033dfa10dc16e845b4ae0d281e2fa377e48a9f', // lucataco/animate-diff
+    version: 'beecf59c4aee8d81bf04f0381033dfa10dc16e845b4ae00d281e2fa377e48a9f', // lucataco/animate-diff (官方版本)
     input: {
       path: "toonyou_beta3.safetensors",
       seed: Math.floor(Math.random() * 1000000), // 随机种子
