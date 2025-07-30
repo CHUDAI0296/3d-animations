@@ -25,6 +25,8 @@ function App() {
     setIsGenerating(true);
     
     try {
+      console.log('Sending request to API...');
+      
       const response = await fetch('/api/replicate', {
         method: 'POST',
         headers: {
@@ -36,12 +38,20 @@ function App() {
         })
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('API error:', errorData);
         throw new Error(errorData.error || 'Generation failed');
       }
 
       const data = await response.json();
+      console.log('API response:', data);
+      
+      if (!data.output) {
+        throw new Error('No output received from API');
+      }
       
       const newGeneration: Generation = {
         id: Date.now().toString(),
@@ -55,6 +65,8 @@ function App() {
       setGenerations(prev => [newGeneration, ...prev]);
       setCurrentGeneration(newGeneration);
       setPrompt(''); // 清空输入框
+      
+      console.log('Generation completed successfully:', newGeneration);
     } catch (error: any) {
       console.error('Generation error:', error);
       alert(`生成失败: ${error.message}`);
